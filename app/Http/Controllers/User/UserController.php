@@ -4,9 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -16,17 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return response()->json(['data'=>$users],200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->showAll($users);
     }
 
     /**
@@ -53,7 +43,7 @@ class UserController extends Controller
         $data['verification_token'] = User::generateVerificationToken();
         $data['admin'] = User::REGULAR_USER;
         $user = User::create($data);
-        return response()->json(['data'=>$user],201);
+        return $this->showOne($user);
     }
 
     /**
@@ -65,18 +55,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json(['data'=>$user],200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $this->showOne($user);
     }
 
     /**
@@ -113,7 +92,7 @@ class UserController extends Controller
         {
             if(!$user->isVerified())
             {
-                return response()->json(['error'=>'Only verified user can change admin property','code'=>409],409);
+                $this->errorResponse('Only verified user can change admin property',409);
             }
 
             $user->admin = $request->admin;
@@ -121,10 +100,10 @@ class UserController extends Controller
         
         if(!$user->isDirty())
         {
-            return response()->json(['error'=>'Nothing to change','code'=>422],422);
+            return $this->errorResponse('Nothing to change',422);
         }
         $user->save();
-        return response()->json(['data'=>$user],200);
+        return $this->showOne($user);
     }
 
     /**
