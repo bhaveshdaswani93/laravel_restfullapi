@@ -41,6 +41,8 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $table = 'users';
+
     public function isAdmin()
     {
         return $this->admin == User::ADMIN_USER;
