@@ -3,10 +3,18 @@
 namespace App\Exceptions;
 
 use Exception;
+use App\Traits\ApiResponser;
+use Illuminate\Database\QueryException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponser;
     /**
      * A list of the exception types that are not reported.
      *
@@ -48,6 +56,63 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        
+        if($exception instanceof ValidationException )
+        {
+            return $this->convertValidationExceptionToResponse($exception, $request);
+        }
+        elseif( $exception instanceof ModelNotFoundException )
+        {
+            // dd($exception);
+            $modelName = strtolower(class_basename($exception->getModel()));
+            return $this->errorResponse("The {$modelName} could not be find by the provided id.",404);
+        }
+        elseif( $exception instanceof AuthenticationException )
+        {
+            return unauthenticated($request, $exception);
+        }
+        elseif( $exception instanceof AuthorizationException ) {
+            return $this->errorResponse($exception->getMessage(),403);
+        }
+        elseif( $exception instanceof NotFoundHttpException )
+        {
+            return $this->errorResponse("The requested resource could not be found.",404);
+        }
+        elseif( $exception instanceof MethodNotAllowedHttpException )
+        {
+            return $this->errorResponse("The resource does not support the current http method.",405);
+        }
+        elseif( $exception instanceof HttpException )
+        {
+            return $this->errorResponse($exception->getMessage(),$exception->getStatusCode());
+        }
+        elseif ( $exception instanceof QueryException ) 
+        {
+            $sqlErrorCode = $exception->errorInfo[1];
+            if($sqlErrorCode == 1451)
+            {
+                return $this->errorResponse("The requested resource cannot be deleted until its child references exists.",409);
+            }
+            
+        } 
+        if (config('app.debug')) 
+        {
+            return parent::render($request, $exception);
+        }
+        return $this->errorResponse("Unknown Exception,Please Try again later.",500);
+         // dd($exception);
+    }
+
+    protected function convertValidationExceptionToResponse($e, $request)
+    {
+        // $message = $e->getMessage();
+        $message =$e->errors();
+        return $this->errorResponse($message,422);
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        $message = $exception->getMessage();
+        return $this->errorResponse($message,401);
     }
 }
