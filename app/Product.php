@@ -5,6 +5,7 @@ namespace App;
 use App\Seller;
 use App\Category;
 use App\Transaction;
+use App\Events\ProductUpdateEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -33,6 +34,11 @@ class Product extends Model
 
     protected $hidden = [
         'pivot'
+    ];
+
+    protected $dispatchesEvents = [
+        'updated' => ProductUpdateEvent::class,
+        // 'saved' => ProductUpdateEvent::class,
     ];
 
     public function isAvailable()
