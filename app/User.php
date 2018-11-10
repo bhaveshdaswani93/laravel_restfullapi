@@ -3,6 +3,8 @@
 namespace App;
 
 
+use App\Events\UserCreatedEvent;
+use App\Events\UserUpdatedEvent;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,10 +46,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','verification_token'
     ];
 
     protected $table = 'users';
+
+    protected $dispatchesEvents = [
+            'created' => UserCreatedEvent::class,
+            'updated' => UserUpdatedEvent::class
+    ];
+
 
     public function isAdmin()
     {
