@@ -8,6 +8,7 @@ use App\Events\UserUpdatedEvent;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Transformers\UserTransformer;
 
 class User extends Authenticatable
 {
@@ -17,6 +18,13 @@ class User extends Authenticatable
 
     const ADMIN_USER = 'true';
     const REGULAR_USER = 'false';
+
+    public $transformer = UserTransformer::class;
+
+    // public function __construct()
+    // {
+    //   dd($this->transformer);
+    // }
 
       /**
      * The attributes that should be mutated to dates.
