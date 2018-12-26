@@ -22,4 +22,18 @@ class CategoryTransformer extends TransformerAbstract
             'deletedDate' => isset($category->deleted_at)?(string)$category->deleted_at:null
         ];
     }
+
+    public static function getOrignalAttribute($attribute)
+    {
+        $attributeMapper =  [
+            'identifier' => 'id',
+            'title' => 'name',
+            'details' => 'description',
+            
+            'createdDate' => 'created_at',
+            'lastChange' => 'updated_at',
+            'deletedDate' => 'deleted_at'
+        ];
+        return isset($attributeMapper[$attribute])?$attributeMapper[$attribute]:null;
+    }
 }
