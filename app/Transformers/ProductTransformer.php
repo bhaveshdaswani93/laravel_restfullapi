@@ -12,7 +12,7 @@ class ProductTransformer extends TransformerAbstract
      *
      * @return array
      */
-    public function transform(Prdouct $product)
+    public function transform(Product $product)
     {
         return [
             'identifier' => (int)$product->id,
@@ -20,11 +20,35 @@ class ProductTransformer extends TransformerAbstract
             'details' => $product->description,
             'stock'=>$product->quantity,
             'situation'=>$product->status,
-            'picture'=> url('images/{$product->image}'),
+            'picture'=> url("images/{$product->image}"),
             'seller'=>$product->seller_id,
             'createdDate' => (string)$product->created_at,
             'lastChange' => (string)$product->updated_at,
-            'deletedDate' => isset($product->deleted_at)?(string)$product->deleted_at:null
+            'deletedDate' => isset($product->deleted_at)?(string)$product->deleted_at:null,
+            'links' => [
+                [
+                    'rel'=>'self',
+                    'href'=>route('products.show',$product->id)
+                ],
+                [
+                    'rel' => 'product.buyer',
+                    'href' => route('products.buyers.index',$product->id)
+                ],
+                
+                [
+                    'rel' => 'product.categories',
+                    'href'=> route('products.categories.index',$product->id)
+                ],
+                [
+                    'rel' => 'product.transactions',
+                    'href' => route('products.transactions.index',$product->id)
+                ],
+                [
+                    'rel' => 'seller',
+                    'href' => route('sellers.show',$product->seller_id)
+                ],
+
+            ]
         ];
     }
 
@@ -37,7 +61,7 @@ class ProductTransformer extends TransformerAbstract
             'stock' => 'quantity',
             'situation' => 'status',
             'seller'=>'seller_id',
-            
+
             'createdDate' => 'created_at',
             'lastChange' => 'updated_at',
             'deletedDate' => 'deleted_at'
