@@ -60,4 +60,19 @@ class CategoryTransformer extends TransformerAbstract
         ];
         return isset($attributeMapper[$attribute])?$attributeMapper[$attribute]:null;
     }
+
+
+    public static function getTransformedAttribute($attribute)
+    {
+        $attributeMapper =  [
+             'id'=>'identifier' ,
+             'name'=>'title' ,
+             'description'=>'details' ,
+            
+             'created_at'=>'createdDate' ,
+             'updated_at'=>'lastChange' ,
+             'deleted_at'=>'deletedDate' ,
+        ];
+        return isset($attributeMapper[$attribute])?$attributeMapper[$attribute]:null;
+    }
 }

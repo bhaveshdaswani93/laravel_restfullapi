@@ -70,4 +70,19 @@ class SellerTransformer extends TransformerAbstract
         ];
         return isset($attributeMapper[$attribute])?$attributeMapper[$attribute]:null;
     }
+
+     public static function getTransformedAttribute($attribute)
+    {
+        $attributeMapper =  [
+            'id'=>'identifier',
+            'name'=>'name',
+            'email'=>'email',
+            'verified'=>'isVerified',
+            
+            'created_at'=>'createdDate',
+            'updated_at'=>'lastChange',
+            'deleted_at' =>'deletedDate',
+        ];
+        return isset($attributeMapper[$attribute])?$attributeMapper[$attribute]:null;
+    }
 }
