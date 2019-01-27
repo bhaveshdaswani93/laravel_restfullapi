@@ -11,7 +11,8 @@
         "laravel/framework": "5.5.*",
         "laravel/homestead": "^7.18",
         "laravel/tinker": "~1.0",
-        "spatie/laravel-fractal": "^5.4"
+        "spatie/laravel-fractal": "^5.4",
+        "laravel/passport": "^4.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
