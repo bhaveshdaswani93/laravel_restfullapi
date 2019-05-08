@@ -71,7 +71,7 @@ class Handler extends ExceptionHandler
         }
         elseif( $exception instanceof AuthenticationException )
         {
-            return unauthenticated($request, $exception);
+            return $this->unauthenticated($request, $exception);
         }
         elseif( $exception instanceof AuthorizationException ) {
             return $this->errorResponse($exception->getMessage(),403);
@@ -145,6 +145,6 @@ class Handler extends ExceptionHandler
 
     private function isFrontend($request)
     {
-        return $request->acceptHtml() && collect($request->route()->middleware())->contain('web');
+        return $request->acceptsHtml() && collect($request->route()->middleware())->contains('web');
     }
 }
