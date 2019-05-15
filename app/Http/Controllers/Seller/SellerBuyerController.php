@@ -19,6 +19,7 @@ class SellerBuyerController extends ApiController
      */
     public function index(Seller $seller)
     {
+        $this->allowedAdminAction();
         $buyers = $seller->products()->with('transactions.buyer')->get()
         ->pluck('transactions')
         ->collapse()
